@@ -19,14 +19,17 @@ const userSchema = new Schema({
     type: String,
     required: true,
   },
-  isAdmin:{
-    type:Boolean
+  isAdmin: {
+    type: Boolean,
+    default: false,
   },
-  isDirection:{
-    type:Boolean
+  isDirection: {
+    type: Boolean,
+    default: false,
   },
-  isScolarite:{
-    type:Boolean
+  isScolarite: {
+    type: Boolean,
+    default: false,
   },
 });
 
@@ -53,7 +56,7 @@ userSchema.statics.signup = async function (
     password: hash,
     isAdmin,
     isDirection,
-    isScolarite
+    isScolarite,
   });
   return user;
 };
