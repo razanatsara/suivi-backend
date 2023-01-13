@@ -4,19 +4,20 @@ const cors = require('cors');
 const cookieParser = require('cookie-parser');
 const { default: mongoose } = require('mongoose');
 const userRoute = require('./Route/userRoute');
+const etudiantRoute = require('./Route/etudiantRoute');
 
 const app = express();
 app.use(express.json());
 app.use(
   cors({
-    origin: ['http://localhost:3000'],
+    origin: 'http://localhost:3000',
     credentials: true,
   })
 );
 app.use(cookieParser());
 
 app.use('/api/user', userRoute);
-
+app.use('/api/etudiant', etudiantRoute);
 mongoose.set('strictQuery', false);
 mongoose
   .connect(process.env.BDD_URI, { useNewUrlParser: true })
