@@ -23,4 +23,7 @@ router.get('/loggedInDirection', userController.loggedInDirection);
 // verify if there are a user loggeIn scolarite
 router.get('/loggedInScolarite', userController.loggedInScolarite);
 
+router.get('/', userController.getAllUser);
+router.get('/:id', userController.getOneUser);
+
 module.exports = router;

@@ -5,9 +5,16 @@ const getDataFromExcel = require('../getDataExcel');
 // creation etudiant à partir de l'excel
 module.exports.createEtudiantExcle = async (req, res) => {
   if (req.file) {
-    console.log(req.file);
-    const student = getDataFromExcel(req.file.path);
     try {
+      const student = getDataFromExcel(req.file.path);
+      await student.forEach((entree) => {
+        entree.classe = [
+          {
+            anneEtude: req.body.anneEtude,
+            niveau: req.body.niveau,
+          },
+        ];
+      });
       const insertEtudiant = await Etudiant.insertMany(student);
       res.status(201).send(insertEtudiant);
     } catch (error) {
@@ -22,30 +29,34 @@ module.exports.createEtudiant = async (req, res) => {
     prenom,
     parcours,
     typeFormation,
-    mention,
+    telephone,
     ecole,
     niveau,
     anneEtude,
   } = req.body;
-
+  console.log(req.body);
   // add to the database
   try {
     const etudiant = await Etudiant.create({
       nom,
       prenom,
       parcours,
+      telephone,
       typeFormation,
-      mention,
+      telephone,
       ecole,
-      niveau,
-      anneEtude,
+      classe: [
+        {
+          anneEtude: anneEtude,
+          niveau: niveau,
+        },
+      ],
     });
     res.status(200).send(etudiant);
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
 };
-
 // obtention d'un seul etudiant
 module.exports.getOneEtudiant = async (req, res) => {
   const { id } = req.params;
@@ -57,6 +68,91 @@ module.exports.getOneEtudiant = async (req, res) => {
     return res.status(404).json({ error: "L'étudiant n'existe pas" });
   }
   res.status(200).send(etudiant);
+};
+
+module.exports.searchEtudiantParcours = async (req, res) => {
+  const etudiant = await Etudiant.find({
+    parcours: req.params.parcours,
+    typeFormation: req.params.typeFormation,
+    'classe.anneEtude': req.params.anneEtude,
+  });
+  if (!etudiant) {
+    return res.status(404).json({ error: "L'étudiant n'existe pas" });
+  }
+  res.status(200).send(etudiant);
+};
+
+// réinscription des étudiants
+module.exports.reinscription = async (req, res) => {
+  for (let i = 0; i < req.body.etudiant.length; i++) {
+    if (req.body.etudiant[i].admis === true) {
+      const etudiant = await Etudiant.findByIdAndUpdate(
+        { _id: req.body.etudiant[i]._id },
+        {
+          $push: {
+            classe: {
+              niveau: req.body.niveau,
+              anneEtude: req.body.anneEtude,
+            },
+          },
+        },
+        { new: true }
+      );
+    } else {
+      const etudiant = await Etudiant.findByIdAndUpdate(
+        { _id: req.body.etudiant[i]._id },
+        {
+          $push: {
+            classe: {
+              niveau: req.body.niveau,
+              anneEtude: req.body.anneEtude - 1,
+            },
+          },
+        },
+        { new: true }
+      );
+    }
+  }
+  res.status(200);
+};
+
+// ajout de liste des sortants
+module.exports.addSortant = async (req, res) => {
+  for (let i = 0; i < req.body.etudiant.length; i++) {
+    if (req.body.etudiant[i].admis === true) {
+      const etudiant = await Etudiant.findByIdAndUpdate(
+        {
+          _id: req.body.etudiant[i]._id,
+          classe: {
+            $elemMatch: {
+              anneEtude: req.body.anneEtude,
+            },
+          },
+        },
+        {
+          $set: {
+            'classe.$.promotion': req.body.promotion,
+          },
+        }
+      );
+    }
+  }
+};
+
+module.exports.searchEtudiant = async (req, res) => {
+  let query = {};
+
+  if (req.query.parcours) {
+    query.parcours = { $regex: req.query.parcours, $options: 'i' };
+  }
+  if (req.query.typeFormation) {
+    query.typeFormation = { $regex: req.query.typeFormation, $options: 'i' };
+  }
+
+  await Etudiant.find(query, (err, etudiant) => {
+    if (err) return res.status(500).send(err);
+    res.status(200).send(etudiant);
+  });
 };
 
 // obtention etudiant selon parcours

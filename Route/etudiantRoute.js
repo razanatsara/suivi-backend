@@ -6,8 +6,16 @@ const upload = require('../middleware/upload.file');
 // obtenir un etudiant
 router.get('/:id', etudiantController.getOneEtudiant);
 
+router.get('/search', etudiantController.searchEtudiant);
+
 // obtenir listes des etudiants selon parcours
 router.get('/', etudiantController.getAllEtudiant);
+
+// recherche etudiant selon leur parcours
+router.get(
+  '/formation/:typeFormation/parcours/:parcours/anneEtude/:anneEtude',
+  etudiantController.searchEtudiantParcours
+);
 
 // creation de l'etudiant
 router.post(
@@ -17,6 +25,13 @@ router.post(
 );
 // creation de l'etudiant
 router.post('/', etudiantController.createEtudiant);
+
+// reinscription des étudiants
+router.patch('/reinscription', etudiantController.reinscription);
+
+// ajout des sortants
+router.patch('/addSortant', etudiantController.addSortant);
+
 // mise à jour de dossier entrant de l'etudiant
 router.patch(
   '/entrant/:id',

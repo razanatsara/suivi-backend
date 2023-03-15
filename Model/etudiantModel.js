@@ -9,6 +9,15 @@ const etudiantSchema = new Schema(
     prenom: {
       type: String,
     },
+    sexe: {
+      type: String,
+    },
+    telephone: {
+      type: String,
+    },
+    email: {
+      type: String,
+    },
     parcours: {
       type: String,
     },
@@ -21,58 +30,65 @@ const etudiantSchema = new Schema(
     ecole: {
       type: String,
     },
-    niveau: {
-      type: String,
-    },
-    anneEtude: {
-      type: String,
-    },
-    promotion: {
-      type: String,
-    },
-    lettreConfirmation: {
-      type: String,
-    },
-    lettreEngagement: {
-      type: String,
-    },
-    ficheIndividuelle: {
-      type: String,
-    },
-    photoIdentite: {
-      type: String,
-    },
-    conventionInsription: {
-      type: String,
-    },
-    recupaiement: {
-      type: String,
-    },
-    quitus: {
-      type: String,
-    },
-    ficheCorrection: {
-      type: String,
-    },
-    ficheAttestation: {
-      type: String,
-    },
-    demandeDiplome: {
-      type: String,
-    },
-    quittance: {
-      type: String,
-    },
-    procuration: {
-      type: String,
-    },
-    releveNote: {
-      type: String,
-    },
-    diplome: {
-      type: Boolean,
-      default: false,
-    },
+    classe: [
+      {
+        niveau: {
+          type: String,
+        },
+        anneEtude: {
+          type: String,
+        },
+        lettreConfirmation: {
+          type: String,
+        },
+        lettreEngagement: {
+          type: String,
+        },
+        ficheIndividuelle: {
+          type: String,
+        },
+        photoIdentite: {
+          type: String,
+        },
+        conventionInsription: {
+          type: String,
+        },
+        recupaiement: {
+          type: String,
+        },
+        promotion: {
+          type: String,
+        },
+        quitus: {
+          type: String,
+        },
+        ficheCorrection: {
+          type: String,
+        },
+        ficheAttestation: {
+          type: String,
+        },
+        demandeDiplome: {
+          type: String,
+        },
+        demandeReleveNote: {
+          type: String,
+        },
+        quittance: {
+          type: String,
+        },
+        procuration: {
+          type: String,
+        },
+        releveNote: {
+          type: String,
+        },
+        diplome: {
+          type: Boolean,
+          default: false,
+        },
+      },
+    ],
   },
   { timestamps: true }
 );

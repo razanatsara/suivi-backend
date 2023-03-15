@@ -15,7 +15,6 @@ app.use(
   })
 );
 app.use(cookieParser());
-
 app.use('/api/user', userRoute);
 app.use('/api/etudiant', etudiantRoute);
 mongoose.set('strictQuery', false);
