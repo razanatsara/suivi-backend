@@ -5,9 +5,16 @@ const getDataFromExcel = require('../getDataExcel');
 // creation etudiant à partir de l'excel
 module.exports.createEtudiantExcle = async (req, res) => {
   if (req.file) {
-    console.log(req.file);
-    const student = getDataFromExcel(req.file.path);
     try {
+      const student = getDataFromExcel(req.file.path);
+      await student.forEach((entree) => {
+        entree.classe = [
+          {
+            anneEtude: req.body.anneEtude,
+            niveau: req.body.niveau,
+          },
+        ];
+      });
       const insertEtudiant = await Etudiant.insertMany(student);
       res.status(201).send(insertEtudiant);
     } catch (error) {
@@ -45,7 +52,6 @@ module.exports.createEtudiant = async (req, res) => {
     res.status(400).json({ error: error.message });
   }
 };
-
 // obtention d'un seul etudiant
 module.exports.getOneEtudiant = async (req, res) => {
   const { id } = req.params;
@@ -57,6 +63,29 @@ module.exports.getOneEtudiant = async (req, res) => {
     return res.status(404).json({ error: "L'étudiant n'existe pas" });
   }
   res.status(200).send(etudiant);
+};
+module.exports.searchEtudiant = async (req, res) => {
+  let query = {};
+  if (req.query.nom) {
+    query.nom = { $regex: req.query.nom, $options: 'i' };
+  }
+  if (req.query.prenom) {
+    query.prennom = { $regex: req.query.prenom, $options: 'i' };
+  }
+  if (req.query.parcours) {
+    query.parcours = { $regex: req.query.parcours, $options: 'i' };
+  }
+  if (req.query.typeFormation) {
+    query.typeFormation = { $regex: req.query.typeFormation, $options: 'i' };
+  }
+  if (req.query.anneEtude) {
+    query.anneEtude = req.query.anneEtude;
+  }
+
+  await Etudiant.find(query, (err, etudiant) => {
+    if (err) return res.status(500).send(err);
+    res.status(200).send(etudiant);
+  });
 };
 
 // obtention etudiant selon parcours
@@ -83,7 +112,8 @@ module.exports.updateEtudiantEntrant = async (req, res) => {
       photoIdentite: req.files['photoIdentite'][0].path,
       conventionInsription: req.files['conventionInsription'][0].path,
       recupaiement: req.files['recupaiement'][0].path,
-    }
+    },
+    { new: true }
   );
   if (!etudiant) {
     return res.status(400).json({ error: "L'etudiant n'existe pas" });

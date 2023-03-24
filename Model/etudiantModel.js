@@ -9,6 +9,15 @@ const etudiantSchema = new Schema(
     prenom: {
       type: String,
     },
+    sexe: {
+      type: String,
+    },
+    telephone: {
+      type: String,
+    },
+    email: {
+      type: String,
+    },
     parcours: {
       type: String,
     },
@@ -21,12 +30,16 @@ const etudiantSchema = new Schema(
     ecole: {
       type: String,
     },
-    niveau: {
-      type: String,
-    },
-    anneEtude: {
-      type: String,
-    },
+    classe: [
+      {
+        niveau: {
+          type: String,
+        },
+        anneEtude: {
+          type: String,
+        },
+      },
+    ],
     promotion: {
       type: String,
     },

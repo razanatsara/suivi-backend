@@ -6,6 +6,8 @@ const upload = require('../middleware/upload.file');
 // obtenir un etudiant
 router.get('/:id', etudiantController.getOneEtudiant);
 
+router.get('/search', etudiantController.searchEtudiant);
+
 // obtenir listes des etudiants selon parcours
 router.get('/', etudiantController.getAllEtudiant);
 
