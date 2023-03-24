@@ -157,3 +157,22 @@ module.exports.loggedInScolarite = (req, res) => {
     res.json(false);
   }
 };
+
+// obtention user
+module.exports.getAllUser = async (req, res) => {
+  const user = await User.find();
+  if (!user) {
+    return res.status(404).json({ error: "Pas encore d'utilisateur" });
+  }
+  res.status(200).send(user);
+};
+
+module.exports.getOneUser = async (req, res) => {
+  const { id } = req.params;
+
+  const user = await User.findById(id);
+  if (!user) {
+    return res.status(404).json({ error: "Pas encore d'utilisateur" });
+  }
+  res.status(200).send(user);
+};
